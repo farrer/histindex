@@ -6,10 +6,12 @@ historical reasearch data (mainly related 17th-18th centuries Mozambique).
 Despite of that, it could be used to index any research data based on
 book/articles and sources.
 
-** Pre-requisites **
-Python 2.x
-wxPython
+## Pre-requisites 
 
-** License **
+ * Python 2.x
+ * wxPython
+
+## License 
+
 MIT
 
