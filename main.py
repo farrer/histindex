@@ -35,6 +35,8 @@ class MainFrame(wx.Frame):
       quoteIcon = wx.Bitmap('data/icons/comment.png')
       quoteAddIcon = wx.Bitmap('data/icons/comment_add.png')
 
+      # Bind event for refresh screen
+      self.Bind(wx.EVT_CHAR_HOOK, self.OnKeyUp)
 
       # File Menu
       fileMenu = wx.Menu()
@@ -209,6 +211,13 @@ class MainFrame(wx.Frame):
       children = self.GetChildren() 
       for child in  children:
          child.Close()
+
+   ## Called on key up, usually for F5 fields refresh
+   def OnKeyUp(self, event):
+      if event.GetKeyCode() == wx.WXK_F5:
+         self.ReloadSearchFieldsData()
+      else:
+         event.Skip()
 
    ## Reload data for our search fields
    # TODO: we should call this function after inserted or deleted or updated
