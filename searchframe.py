@@ -1,6 +1,8 @@
 import wx
 import sqlite3
 import os
+import io
+import datetime
 from database import DataConnection
 from quoteframes import QuoteFrame
 
@@ -30,6 +32,16 @@ class SearchResultFrame(wx.Frame, DataConnection):
       DataConnection.__init__(self, databaseName)
       wx.Frame.__init__(self, parent, title = "Search Result") 
       self.sizer = wx.BoxSizer(wx.VERTICAL)
+
+      # Menu for search export
+      searchMenu = wx.Menu()
+      exportSearch = searchMenu.Append(wx.ID_SAVEAS, "E&xport", 
+                                       "Export search results")
+      self.Bind(wx.EVT_MENU, self.OnExport, exportSearch)
+
+      menuBar = wx.MenuBar()
+      menuBar.Append(searchMenu, "&Search")
+      self.SetMenuBar(menuBar)
 
       # A Total displayer
       self.totalText = wx.StaticText(self, -1, "Total:")
@@ -159,8 +171,8 @@ class SearchResultFrame(wx.Frame, DataConnection):
       self.DefineSourceIds(result)
 
       ## Retrive book and source information
-      bookInfo = self.SearchBooks()
-      sourceInfo = self.SearchSources()
+      self.bookInfo = self.SearchBooks()
+      self.sourceInfo = self.SearchSources()
 
       # Insert all results
       curBook = 0
@@ -171,14 +183,14 @@ class SearchResultFrame(wx.Frame, DataConnection):
          # Check if use book information.
          if(line[3] != None):
             # Positionate to desired book on vector
-            while(bookInfo[curBook][0] < line[3]):
+            while(self.bookInfo[curBook][0] < line[3]):
                curBook += 1
-            self.listView.SetStringItem(0, 1, bookInfo[curBook][1])
+            self.listView.SetStringItem(0, 1, self.bookInfo[curBook][1])
          # Check source info
          elif(line[4] != None):
-            while(sourceInfo[curSource][0] < line[4]):
+            while(self.sourceInfo[curSource][0] < line[4]):
                curSource += 1
-            self.listView.SetStringItem(0, 1, sourceInfo[curSource][1])
+            self.listView.SetStringItem(0, 1, self.sourceInfo[curSource][1])
          # Page
          if(line[2] != None):
             self.listView.SetStringItem(0, 2, str(line[2]))
@@ -264,4 +276,41 @@ class SearchResultFrame(wx.Frame, DataConnection):
          self.text.SetValue(self.listView.GetItemText(el))
          el = self.listView.GetNextSelected(el)
 
+   ## Called for search result export
+   def OnExport(self, event):
+      dlg = wx.FileDialog(self, "Export search result", "", "", 
+                          "*.txt", wx.SAVE)
+      if dlg.ShowModal() == wx.ID_OK:
+         self.Export(os.path.join(dlg.GetDirectory(), dlg.GetFilename()))
+         dlg.Destroy()
+
+
+   def Export(self, filename):
+      with io.open(filename, "w", encoding="utf-8") as f:
+         # Save export information
+         f.write(u"database: " + self.databaseName + u"\n")
+         f.write(u"exported at: " + str(datetime.datetime.now()) + u"\n")
+         if len(self.keywords) > 0:
+            # TODO: get keywords names, instead of ids
+            f.write(u"Keywords: " + str(self.keywords) + u"\n")
+         if self.searchText != None:
+            f.write(u"Search string: *")
+            f.write(self.searchText)
+            f.write(u"*\n")
+
+         # Save each result (already grouped by book/source)
+         i = 0
+         last = ""
+         while i < self.listView.GetItemCount():
+            ref = self.listView.GetItemText(i, 1)
+            if ref != last:
+               last = ref
+               f.write(u"\n")
+               f.write(ref)
+               f.write(u"\n")
+            f.write(u"   page: " + self.listView.GetItemText(i, 2))
+            f.write(u"\n\t")
+            f.write(self.listView.GetItemText(i, 0))
+            f.write(u"\n")
+            i += 1
 
