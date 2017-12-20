@@ -23,8 +23,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -42,9 +45,12 @@ public class SearchFrame extends BaseFrame {
 	private TextField text;
 	private Scene searchScene;
 	private ObservableList<Quote> resultList;
+	private TextArea quoteText;
+	private TextArea comment;
+	private TextArea keys;
 	private Scene resultScene;
 	
-	/** Cosntructor.
+	/** Constructor.
 	 * @param database {@link Database} to use. */
 	public SearchFrame(Database database) {
 		this.database = database;
@@ -143,6 +149,30 @@ public class SearchFrame extends BaseFrame {
 		
 		resultList = FXCollections.observableArrayList();
 		
+		/* Right area with current selected text and comment. */
+		VBox right = new VBox();
+		
+		quoteText = new TextArea();
+		quoteText.setWrapText(true);
+		quoteText.setPrefWidth(200);
+		quoteText.setPrefHeight(200);
+		quoteText.setEditable(false);
+		
+		comment = new TextArea();
+		comment.setWrapText(true);
+		comment.setPrefWidth(200);
+		comment.setPrefHeight(100);
+		comment.setEditable(false);
+		
+		keys = new TextArea();
+		keys.setWrapText(true);
+		keys.setPrefWidth(200);
+		keys.setPrefHeight(100);
+		keys.setEditable(false);
+		
+		right.getChildren().addAll(quoteText, comment, keys);
+		root.setRight(right);
+		
 		/* At center, our result grid */
 		TableView<Quote> resultTable = new TableView<Quote>();
 		resultTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -163,6 +193,16 @@ public class SearchFrame extends BaseFrame {
 		pageCol.setMinWidth(40);
 		pageCol.setCellValueFactory(new PropertyValueFactory<Quote, String>("page"));
 		resultTable.getColumns().add(pageCol);
+		resultTable.setOnMousePressed(new EventHandler<MouseEvent>() {
+		    public void handle(MouseEvent event) {
+		    	setSelected(resultTable.getSelectionModel().getSelectedItem());
+		    }
+		});
+		resultTable.setOnKeyReleased(new EventHandler<KeyEvent>() {
+		    public void handle(KeyEvent event) {
+		    	setSelected(resultTable.getSelectionModel().getSelectedItem());
+		    }
+		});
 		
 		root.setCenter(resultTable);
 		
@@ -185,6 +225,18 @@ public class SearchFrame extends BaseFrame {
 		root.setBottom(bottom);
 		
 		return new Scene(root);
+	}
+	
+	private void setSelected(Quote selected) {
+		if(selected != null) {
+    		quoteText.setText(selected.getText());
+    		comment.setText(selected.getComment());
+    		keys.setText(selected.getKeywords());
+        } else {
+        	quoteText.clear();
+        	comment.clear();
+        	keys.clear();
+        }
 	}
 	
 	/** Do the desired search and display its result. */
