@@ -84,7 +84,7 @@ public class Quote extends Entity {
 	 * @param book new {@link #book} value. */
 	public void setBook(Book book) {
 		this.book = book;
-		this.bookId = (book != null) ? book.getId() : null;
+		this.bookId = (book != null) ? book.getId() : 0;
 	}
 	
 	/** @return {@link #sourceId}. */
@@ -111,7 +111,7 @@ public class Quote extends Entity {
 	 * @param source new {@link #source} value. */
 	public void setSource(Source source) {
 		this.source = source;
-		this.sourceId = (source != null) ? source.getId() : null;
+		this.sourceId = (source != null) ? source.getId() : 0;
 	}
 	
 	/** @return description about the book or source from the quote is from. */
