@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.dnteam.histindex.database.Database;
 import org.dnteam.histindex.database.Entity;
+import org.dnteam.histindex.exporters.ExporterFonts;
 import org.dnteam.histindex.frames.AuthorEditFrame;
 import org.dnteam.histindex.frames.AuthorListFrame;
 import org.dnteam.histindex.frames.BookEditFrame;
@@ -225,11 +226,22 @@ public class App extends Application {
 		}
 		
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void stop() {
+		ExporterFonts.finish();
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void start(Stage primaryStage) {
-		primaryStage.setTitle("HistIndex");
+		
+		HistIndexProperties.init();
+		ExporterFonts.init("fonts/FreeSerif.ttf", "fonts/FreeSerifItalic.ttf", 
+				"fonts/FreeSerifBold.ttf", "fonts/FreeSerifBoldItalic.ttf");
+		
+		primaryStage.setTitle("HistIndex " + HistIndexProperties.getVersion());
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent t) {
 				Platform.exit();

@@ -1,5 +1,6 @@
 package org.dnteam.histindex.frames;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import org.dnteam.histindex.database.Database;
 import org.dnteam.histindex.database.Quote;
 import org.dnteam.histindex.database.QuoteManager;
+import org.dnteam.histindex.exporters.PdfExporter;
 import org.dnteam.histindex.widgets.AuthorSelector;
 import org.dnteam.histindex.widgets.BookSelector;
 import org.dnteam.histindex.widgets.KeywordSelector;
@@ -19,6 +21,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -32,7 +36,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import net.sf.nervalreports.core.ReportGenerationException;
 
 public class SearchFrame extends BaseFrame {
 	
@@ -179,6 +186,12 @@ public class SearchFrame extends BaseFrame {
 		resultTable.setPrefWidth(800);
 		resultTable.setItems(resultList);
 		
+//		TableColumn<Quote, Long> idCol = new TableColumn<Quote, Long>("Id");
+//		idCol.setMaxWidth(60);
+//		idCol.setMinWidth(40);
+//		idCol.setCellValueFactory(new PropertyValueFactory<Quote, Long>("id"));
+//		resultTable.getColumns().add(idCol);
+		
 		TableColumn<Quote, String> textCol = new TableColumn<Quote, String>("Text");		
 		textCol.setCellValueFactory(new PropertyValueFactory<Quote, String>("text"));
 		resultTable.getColumns().add(textCol);
@@ -227,6 +240,8 @@ public class SearchFrame extends BaseFrame {
 		return new Scene(root);
 	}
 	
+	/** Change current selected {@link Quote} at result list.
+	 * @param selected new selected {@link Quote}. */
 	private void setSelected(Quote selected) {
 		if(selected != null) {
     		quoteText.setText(selected.getText());
@@ -257,6 +272,20 @@ public class SearchFrame extends BaseFrame {
 	
 	/** Export the search */
 	private void onExportButtonClick() {
+		final FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF", "*.pdf"), new ExtensionFilter("Text", "*.txt"));
+		File file = fileChooser.showSaveDialog(stage);
+		if (file != null) {
+			PdfExporter exporter = new PdfExporter(resultList);
+			try {
+				exporter.generate();
+				exporter.export(file.getAbsolutePath());
+				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported.");
+				alert.showAndWait();
+			} catch (ReportGenerationException e) {
+				showError("Error while exporting results: '" + e.getMessage() + "'");
+			}
+		}
 	}
 
 }

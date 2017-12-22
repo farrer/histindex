@@ -1,0 +1,5 @@
+
+Free-Fonts (FreeSerif*)
+   source: https://savannah.gnu.org/projects/freefont/
+   license: GPLv2
+
