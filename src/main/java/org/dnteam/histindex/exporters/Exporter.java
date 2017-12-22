@@ -38,6 +38,12 @@ public abstract class Exporter {
 	 * @throws ReportGenerationException */
 	public void export(String filepath) throws ReportGenerationException {
 		generator.saveToFile(filepath);
+		generator.release();
+	}
+	
+	/** Release and close our references */
+	public void release() {
+		generator.release();
 	}
 
 	/** Generate the export to the ReportGenerator. But without saving it yet to a file.

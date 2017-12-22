@@ -272,6 +272,9 @@ public class SearchFrame extends BaseFrame {
 	
 	/** Export the search */
 	private void onExportButtonClick() {
+		
+		resultScene.getRoot().setDisable(true);
+		
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF", "*.pdf"), new ExtensionFilter("Text", "*.txt"));
 		File file = fileChooser.showSaveDialog(stage);
@@ -283,9 +286,13 @@ public class SearchFrame extends BaseFrame {
 				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported.");
 				alert.showAndWait();
 			} catch (ReportGenerationException e) {
+				exporter.release();
 				showError("Error while exporting results: '" + e.getMessage() + "'");
 			}
 		}
+		
+		resultScene.getRoot().setDisable(false);
+		
 	}
 
 }
