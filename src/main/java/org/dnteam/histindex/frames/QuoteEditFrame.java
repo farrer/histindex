@@ -160,7 +160,7 @@ public class QuoteEditFrame extends BaseEditFrame<Quote> {
 		if(quote.getId() != 0) {
 			/* Updating a quote, must delete it's no more in use keywords.
 			 * Note: deleting all, to avoid incoherences (and simplifying our check). */
-			QuoteKeywordManager.getSingleton().deleteKeywordFromQuotes(con, quote.getId());
+			QuoteKeywordManager.getSingleton().deleteKeywordsFromQuote(con, quote.getId());
 		}
 	}
 	
@@ -179,7 +179,7 @@ public class QuoteEditFrame extends BaseEditFrame<Quote> {
 	@Override
 	public void doBeforeDelete(Connection con, Quote quote) throws SQLException {
 		/* We should delete all QuoteKeyword information for this quote */
-		QuoteKeywordManager.getSingleton().deleteKeywordFromQuotes(con, quote.getId());
+		QuoteKeywordManager.getSingleton().deleteKeywordsFromQuote(con, quote.getId());
 	}
 
 }

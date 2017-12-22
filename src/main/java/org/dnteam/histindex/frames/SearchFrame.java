@@ -41,6 +41,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import net.sf.nervalreports.core.ReportGenerationException;
 
+/** Frame used to create and display {@link Quote} searches.
+ * @author farrer */
 public class SearchFrame extends BaseFrame {
 	
 	private final Database database;
@@ -257,6 +259,8 @@ public class SearchFrame extends BaseFrame {
 	/** Do the desired search and display its result. */
 	private void onSeachButtonClick() {
 		
+		searchScene.getRoot().setDisable(true);
+		
 		try(Connection conn = DriverManager.getConnection(database.getURL())) {
 			QuoteManager qm = QuoteManager.getSingleton();
 			
@@ -266,6 +270,8 @@ public class SearchFrame extends BaseFrame {
 		} catch(SQLException e) {
 			showError("Error while searching: '" + e.getMessage() + "'");
 		}
+		
+		searchScene.getRoot().setDisable(false);
 		
 		stage.setScene(resultScene);
 	}

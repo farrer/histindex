@@ -88,6 +88,22 @@ public class QuoteKeywordManager extends ComposedEntityManager<QuoteKeyword> {
 			return stmt.executeUpdate();
 		}
 	}
+	
+	/** Delete all references to an specific {@link Quote}.
+	 * @param conn connection to use.
+	 * @param quoteId identifier of the {@link Keyword} to delete its references.
+	 * @return number of deleted references.
+	 * @throws SQLException */
+	public int deleteKeywordsFromQuote(Connection conn, long quoteId) throws SQLException {
+
+		String query = "DELETE FROM " + TABLE_NAME;
+		query += " WHERE " + QUOTE_ID + " = ?";
+
+		try(PreparedStatement stmt = conn.prepareStatement(query)){
+			stmt.setLong(1, quoteId);
+			return stmt.executeUpdate();
+		}
+	}
 
 	/** Populate all {@link Keyword}s of a {@link Quote}.
 	 * @param conn connection to use.
