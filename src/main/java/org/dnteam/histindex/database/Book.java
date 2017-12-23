@@ -30,15 +30,9 @@ public class Book extends Entity {
 		this.title = title;
 	}
 	
-	/** Clear current authors list. */
-	public void clearAuthors() {
-		authorList.clear();
-	}
-	
 	/** Insert a author to the book's author list
 	 * @param author to insert */
 	public void addAuthor(Author author) {
-		authorList = new ArrayList<Author>();
 		authorList.add(author);
 		dirty = true;
 	}
@@ -53,6 +47,7 @@ public class Book extends Entity {
 	/** Remove all current authors from a book. */
 	public void removeAllAuthors() {
 		authorList.clear();
+		dirty = true;
 	}
 	
 	/** @return book authors as a text to display */ 

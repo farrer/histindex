@@ -93,7 +93,7 @@ public class BookAuthorManager extends ComposedEntityManager<BookAuthor> {
 		try(PreparedStatement stmt = conn.prepareStatement(query)){
 			stmt.setLong(1, book.getId());
 			try(ResultSet rs = stmt.executeQuery()) {
-				book.clearAuthors();
+				book.removeAllAuthors();
 				while(rs.next()) {
 					Author author = authorManager.createEntity();
 					authorManager.populate(rs, author, 1);
@@ -171,6 +171,7 @@ public class BookAuthorManager extends ComposedEntityManager<BookAuthor> {
 			int i = 1;
 			for(Book book : data) {
 				stmt.setLong(i, book.getId());
+				book.removeAllAuthors();
 				i++;
 			}
 			
