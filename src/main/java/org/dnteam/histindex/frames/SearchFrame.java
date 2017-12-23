@@ -285,9 +285,11 @@ public class SearchFrame extends BaseFrame {
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF", "*.pdf"), new ExtensionFilter("Text", "*.txt"));
 		File file = fileChooser.showSaveDialog(stage);
 		if (file != null) {
-			PdfExporter exporter = new PdfExporter(resultList);
+			//TODO: get file extension before deciding for pdf.
+			PdfExporter exporter = new PdfExporter(database, resultList);
 			try {
-				exporter.generate();
+				exporter.generate(keywords.getSelected(), books.getSelected(), 
+						authors.getSelected(), sources.getSelected(), text.getText());
 				exporter.export(file.getAbsolutePath());
 				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported.");
 				alert.showAndWait();

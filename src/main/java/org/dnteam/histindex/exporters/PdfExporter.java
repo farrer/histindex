@@ -3,6 +3,7 @@ package org.dnteam.histindex.exporters;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.dnteam.histindex.database.Database;
 import org.dnteam.histindex.database.Quote;
 
 import net.sf.nervalreports.core.ReportGenerationException;
@@ -13,8 +14,8 @@ import net.sf.nervalreports.generators.PDFReportGenerator;
  * @author farrer */
 public class PdfExporter extends Exporter {
 
-	public PdfExporter(Collection<Quote> quotes) {
-		super(quotes);
+	public PdfExporter(Database database, Collection<Quote> quotes) {
+		super(database, quotes);
 	}
 
 	/** {@inheritDoc} */
