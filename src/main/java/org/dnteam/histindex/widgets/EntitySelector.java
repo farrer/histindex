@@ -19,6 +19,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 /** Basic class for creating a selector of 'n' elements of a {@link Entity} from the database.
@@ -64,10 +65,14 @@ public abstract class EntitySelector<T extends Entity> {
 		table.setOnKeyReleased(new EventHandler<KeyEvent>() {
 		    public void handle(KeyEvent event) {
 		        if (event.getCode() == KeyCode.DELETE) {
-		      	  T selected = table.getSelectionModel().getSelectedItem();
-		      	  if(selected != null) {
-		      		  curSelected.remove(selected);
-		      	  }
+		      	  removeSelectedFromTable();
+		        }
+		    }
+		});
+		table.setOnMousePressed(new EventHandler<MouseEvent>() {
+		    public void handle(MouseEvent event) {
+		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+		        	removeSelectedFromTable();
 		        }
 		    }
 		});
@@ -87,6 +92,14 @@ public abstract class EntitySelector<T extends Entity> {
 		});
 		grid.add(new Label("Add " + entityName + ":"), gridX, gridY + 1);
 		grid.add(selector, gridX + 1, gridY + 1);
+	}
+	
+	/** Remove current selected item from table. */
+	private void removeSelectedFromTable() {
+		T selected = table.getSelectionModel().getSelectedItem();
+		if(selected != null) {
+			curSelected.remove(selected);
+		}
 	}
 	
 	/** Set the width used by the component.

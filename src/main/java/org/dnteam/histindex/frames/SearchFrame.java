@@ -29,7 +29,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -185,6 +187,7 @@ public class SearchFrame extends BaseFrame {
 		/* At center, our result grid */
 		TableView<Quote> resultTable = new TableView<Quote>();
 		resultTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		resultTable.setTooltip(new Tooltip("Double-click on selection to remove from result."));
 		resultTable.setPrefWidth(800);
 		resultTable.setItems(resultList);
 		
@@ -210,12 +213,21 @@ public class SearchFrame extends BaseFrame {
 		resultTable.getColumns().add(pageCol);
 		resultTable.setOnMousePressed(new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
-		    	setSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+		    		removeSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	} else {
+		    		setSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	}
 		    }
 		});
 		resultTable.setOnKeyReleased(new EventHandler<KeyEvent>() {
 		    public void handle(KeyEvent event) {
-		    	setSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	if (event.getCode() == KeyCode.DELETE) {
+		    		removeSelected(resultTable.getSelectionModel().getSelectedItem());
+		        } else {
+		        	/* Show the current selection full text */
+		        	setSelected(resultTable.getSelectionModel().getSelectedItem());
+		        }
 		    }
 		});
 		
@@ -240,6 +252,15 @@ public class SearchFrame extends BaseFrame {
 		root.setBottom(bottom);
 		
 		return new Scene(root);
+	}
+	
+	/** Remove current selected {@link Quote} from the result list.
+	 * @param selected current selected {@link Quote}. */
+	private void removeSelected(Quote selected) {
+    	if(selected != null) {
+    		resultList.remove(selected);
+    		setSelected(null);
+    	}
 	}
 	
 	/** Change current selected {@link Quote} at result list.
