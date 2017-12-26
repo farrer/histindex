@@ -1,7 +1,10 @@
 package org.dnteam.histindex.generators;
 
+import java.util.Collection;
+
 import org.dnteam.histindex.database.Book;
 import org.dnteam.histindex.database.EntityManager;
+import org.dnteam.histindex.database.Keyword;
 import org.dnteam.histindex.database.Quote;
 import org.dnteam.histindex.database.QuoteManager;
 import org.dnteam.histindex.database.Source;
@@ -37,6 +40,13 @@ public class QuoteGenerator extends EntityGenerator<Quote> {
 	
 	public QuoteGenerator withSource(Source source) {
 		quote.setSource(source);
+		return this;
+	}
+	
+	public QuoteGenerator withKeywords(Collection<Keyword> keys) {
+		for(Keyword key : keys) {
+			quote.addKeyword(key);
+		}
 		return this;
 	}
 
