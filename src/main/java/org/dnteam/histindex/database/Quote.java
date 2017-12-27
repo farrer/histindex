@@ -3,6 +3,8 @@ package org.dnteam.histindex.database;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.dnteam.histindex.util.StringUtil;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -15,7 +17,7 @@ public class Quote extends Entity {
 	/** The quote commentary */
 	private String comment;
 	/** Page(s) where the text is */
-	private String page;
+	private String page = "";
 	/** Identifier of the book which the quote is from (if any) */
 	private long bookId;
 	/** Book which the quote is from (if any) */
@@ -26,6 +28,10 @@ public class Quote extends Entity {
 	private Source source;
 	/** {@link Keyword} list. */
 	private List<Keyword> keywords = new LinkedList<Keyword>();
+	/** If #page is dirty and need to reset #pageAsNumber */
+	private boolean pageIsDirty = true;
+	/** Integer value for 'page' */
+	private int pageAsNumber = 0;
 	
 	/** @return {@link #text} */
 	public String getText() {
@@ -49,6 +55,26 @@ public class Quote extends Entity {
 		this.comment = comment;
 	}
 	
+	public int getPageAsNumber() {
+		if(pageIsDirty) {
+			String val = "";
+			for(Character c : page.toCharArray()) {
+				if(!Character.isDigit(c)) {
+					break;
+				}
+				val += c;
+			}
+			if(!StringUtil.isEmpty(val)) {
+				Integer.decode(val);
+			} else {
+				pageAsNumber = 0;
+			}
+			pageIsDirty = false;
+		}
+		
+		return pageAsNumber;
+	}
+	
 	/** @return {@link #page}. */
 	public String getPage() {
 		return page;
@@ -57,7 +83,8 @@ public class Quote extends Entity {
 	/** Set {@link #page}.
 	 * @param page new {@link #page} value. */
 	public void setPage(String page) {
-		this.page = page;
+		this.page = (page != null) ? page : "";
+		this.pageIsDirty = true;
 	}
 	
 	/** @return {@link #bookId}. */

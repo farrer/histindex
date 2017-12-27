@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 import org.dnteam.histindex.util.StringUtil;
 
@@ -129,7 +128,6 @@ public class QuoteManager extends EntityManager<Quote> {
 	   }
 	}
 	
-	//TODO create test case.
 	/** Search for {@link Quote}s, filtering by all its relations.
 	 * @param conn {@link Connection} to use.
 	 * @param keywords {@link Keyword}s to filter, if any.
@@ -292,12 +290,12 @@ public class QuoteManager extends EntityManager<Quote> {
 		QuoteKeywordManager.getSingleton().populateKeywords(conn, data);
 		
 		//FIXME: this is ugly and inefficient, but our page must be a string... ouch!
-		QuoteManager.getSingleton().sort(data);
+		sort(data);
 	}
 	
 	/** Sort a list of quotes.
 	 * @param quotes list to sort. */
-	public void sort(List<Quote> quotes) {
+	private void sort(List<Quote> quotes) {
 		quotes.sort(new Comparator<Quote>() {
 
 			@Override
@@ -316,12 +314,11 @@ public class QuoteManager extends EntityManager<Quote> {
 				}
 				
 				if(!StringUtil.isEmpty(o1.getPage()) && !StringUtil.isEmpty(o2.getPage())) {
-					Scanner p1 = new Scanner(o1.getPage());
-					Scanner p2 = new Scanner(o2.getPage());
-					int res = p1.nextInt() - p2.nextInt();
-					p1.close();
-					p2.close();
-					
+					int res = o1.getPageAsNumber() - o2.getPageAsNumber();
+					if(res != 0) {
+						return res;
+					}
+						
 					return res;
 				}
 				
