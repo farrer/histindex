@@ -1,7 +1,13 @@
 package org.dnteam.histindex.generators;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.dnteam.histindex.database.Author;
+import org.dnteam.histindex.database.AuthorManager;
 import org.dnteam.histindex.database.Book;
+import org.dnteam.histindex.database.BookAuthor;
+import org.dnteam.histindex.database.BookAuthorManager;
 import org.dnteam.histindex.database.BookManager;
 import org.dnteam.histindex.database.EntityManager;
 
@@ -40,6 +46,17 @@ public class BookGenerator extends EntityGenerator<Book> {
 			withTitle("Livro das Hortências");
 		}
 		return book;
+	}
+
+	@Override
+	protected void persistRelations(Connection conn) throws SQLException {
+		for(Author a : book.getAuthorsCopy()) {
+			if(a.getId() == 0) {
+				AuthorManager.getSingleton().insert(conn, a);
+			}
+			BookAuthorManager.getSingleton().insert(conn, new BookAuthor(book, a));
+		}
+		
 	}
 
 }

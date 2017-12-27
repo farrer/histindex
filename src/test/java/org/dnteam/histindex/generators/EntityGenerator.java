@@ -18,6 +18,11 @@ public abstract class EntityGenerator<T extends Entity> {
 	/** @return the entity in creation */
 	public abstract T getEntity();
 	
+	/** Persist related entities (for example, for a Book, persist its BookAuthors).
+	 * @param conn connection to use. 
+	 * @throws SQLException on failed to insert. */
+	protected abstract void persistRelations(Connection conn)  throws SQLException;
+	
 	/** Persist (insert) the in-creation entity to the database.
 	 * @param database to use.
 	 * @return Created entity (with its id defined).
@@ -31,7 +36,8 @@ public abstract class EntityGenerator<T extends Entity> {
 	/** Same as {@link #persist(Database)}, but with an already opened connection. */	
 	public T persist(Connection conn) throws SQLException {
 		T ent = getEntity();
-		getManager().insert(conn, ent);	
+		getManager().insert(conn, ent);
+		persistRelations(conn);
 		return ent;
 	}
 	

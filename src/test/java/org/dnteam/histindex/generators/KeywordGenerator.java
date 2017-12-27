@@ -1,5 +1,8 @@
 package org.dnteam.histindex.generators;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.dnteam.histindex.database.Keyword;
 import org.dnteam.histindex.database.KeywordManager;
 
@@ -25,6 +28,10 @@ public class KeywordGenerator extends EntityGenerator<Keyword> {
 			withName("Ivory");
 		}
 		return keyword;
+	}
+
+	@Override
+	protected void persistRelations(Connection conn) throws SQLException {
 	}
 
 }

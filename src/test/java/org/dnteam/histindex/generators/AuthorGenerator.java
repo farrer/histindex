@@ -1,5 +1,8 @@
 package org.dnteam.histindex.generators;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.dnteam.histindex.database.Author;
 import org.dnteam.histindex.database.AuthorManager;
 
@@ -35,6 +38,10 @@ public class AuthorGenerator extends EntityGenerator<Author> {
 			withLastName("Horteleiro");
 		}
 		return author;
+	}
+
+	@Override
+	protected void persistRelations(Connection conn) throws SQLException {
 	}
 
 }

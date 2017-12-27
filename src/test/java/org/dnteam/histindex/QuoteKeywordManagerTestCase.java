@@ -108,16 +108,6 @@ public class QuoteKeywordManagerTestCase extends ComposedEntityManagerTestCase<Q
 			quoteB = new QuoteGenerator().withBook(bookB).withKeywords(keysB).persist(conn);
 		}
 		
-		/* Persist the quote/keywords */
-		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
-			for(Keyword key : keysA) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteA, key));
-			}
-			for(Keyword key : keysB) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteB, key));
-			}
-		}
-		
 		/* Delete changamire Keyword */
 		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
 			int deleted = QuoteKeywordManager.getSingleton().deleteKeywordFromQuotes(conn, changamire.getId());
@@ -182,16 +172,6 @@ public class QuoteKeywordManagerTestCase extends ComposedEntityManagerTestCase<Q
 			quoteB = new QuoteGenerator().withBook(bookB).withKeywords(keysB).persist(conn);
 		}
 		
-		/* Persist the quote/keywords */
-		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
-			for(Keyword key : keysA) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteA, key));
-			}
-			for(Keyword key : keysB) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteB, key));
-			}
-		}
-		
 		/* Delete keywords from quoteA */
 		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
 			int deleted = QuoteKeywordManager.getSingleton().deleteKeywordsFromQuote(conn, quoteA.getId());
@@ -244,19 +224,11 @@ public class QuoteKeywordManagerTestCase extends ComposedEntityManagerTestCase<Q
 			
 			Book bookA = new BookGenerator().persist(conn);
 			Book bookB = new BookGenerator().persist(conn);
-			quoteA = new QuoteGenerator().withBook(bookA).persist(conn);
-			quoteB = new QuoteGenerator().withBook(bookB).persist(conn);
+			quoteA = new QuoteGenerator().withBook(bookA).withKeywords(keysA).persist(conn);
+			quoteB = new QuoteGenerator().withBook(bookB).withKeywords(keysB).persist(conn);
 		}
-		
-		/* Persist the quote/keywords */
-		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
-			for(Keyword key : keysA) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteA, key));
-			}
-			for(Keyword key : keysB) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteB, key));
-			}
-		}
+		quoteA.clearKeywords();
+		quoteB.clearKeywords();
 		
 		/* Check if populated */
 		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
@@ -290,19 +262,11 @@ public class QuoteKeywordManagerTestCase extends ComposedEntityManagerTestCase<Q
 			
 			Book bookA = new BookGenerator().persist(conn);
 			Book bookB = new BookGenerator().persist(conn);
-			quoteA = new QuoteGenerator().withBook(bookA).persist(conn);
-			quoteB = new QuoteGenerator().withBook(bookB).persist(conn);
+			quoteA = new QuoteGenerator().withBook(bookA).withKeywords(keysA).persist(conn);
+			quoteB = new QuoteGenerator().withBook(bookB).withKeywords(keysB).persist(conn);
 		}
-		
-		/* Persist the quote/keywords */
-		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
-			for(Keyword key : keysA) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteA, key));
-			}
-			for(Keyword key : keysB) {
-				QuoteKeywordManager.getSingleton().insert(conn, createEntity(quoteB, key));
-			}
-		}
+		quoteA.clearKeywords();
+		quoteB.clearKeywords();
 		
 		/* Check if populated on a list */
 		List<Quote> quotes = new ArrayList<Quote>();

@@ -1,5 +1,8 @@
 package org.dnteam.histindex.generators;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.dnteam.histindex.database.Source;
 import org.dnteam.histindex.database.SourceManager;
 
@@ -41,6 +44,10 @@ public class SourceGenerator extends EntityGenerator<Source> {
 			source.setExtraInfo("Without author, probably from the 1750s");
 		}
 		return source;
+	}
+
+	@Override
+	protected void persistRelations(Connection conn) throws SQLException {		
 	}
 
 }

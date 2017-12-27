@@ -140,27 +140,46 @@ public class QuoteManager extends EntityManager<Quote> {
 	public List<Quote> search(Connection conn, Collection<Keyword> keywords, Collection<Book> books, 
 			Collection<Author> authors, Collection<Source> sources, String text) throws SQLException {
 		
-		String query = "SELECT " + getColumnsForSelect() + 
+		QuoteKeywordManager qkm = QuoteKeywordManager.getSingleton();
+		BookAuthorManager bam = BookAuthorManager.getSingleton();
+		
+		String query = "SELECT DISTINCT " + getColumnsForSelect() + 
 				" FROM " + getTableName() + " " + getTableAlias() + " ";
 		
 		if((keywords != null) && (!keywords.isEmpty())) {
-			QuoteKeywordManager qkm = QuoteKeywordManager.getSingleton();
 			query += " INNER JOIN " + qkm.getTableName() + " " + qkm.getTableAlias() +
-					" ON " + qkm.getTableAlias() + "." + QuoteKeywordManager.QUOTE_ID + " = " + getTableAlias() + "." + ID +
-					" AND " + qkm.getTableAlias() + "." + QuoteKeywordManager.KEYWORD_ID + createInClause(keywords.size());
+					" ON " + qkm.getTableAlias() + "." + QuoteKeywordManager.QUOTE_ID + " = " + getTableAlias() + "." + ID;
 		}
 		
 		if((authors != null) && (!authors.isEmpty())) {
-			BookAuthorManager bam = BookAuthorManager.getSingleton();
 			query += " INNER JOIN " + bam.getTableName() + " " + bam.getTableAlias() +
-					" ON " + bam.getTableAlias() + "." + BookAuthorManager.BOOK_ID + " = " + getTableAlias() + "." + BOOK_ID +
-					" AND " + bam.getTableAlias() + "." + BookAuthorManager.AUTHOR_ID + createInClause(authors.size());
+					" ON " + bam.getTableAlias() + "." + BookAuthorManager.BOOK_ID + " = " + getTableAlias() + "." + BOOK_ID;
 		}
 		
 		boolean whereDefined = false;
 		if((books != null) && (!books.isEmpty())) {
 			whereDefined = true;
 			query += " WHERE " + getTableAlias() + "." + BOOK_ID + createInClause(books.size());
+		}
+		
+		if((keywords != null) && (!keywords.isEmpty())) {
+			if(!whereDefined) {
+				query += " WHERE ";
+				whereDefined = true;
+			} else {
+				query += "AND ";
+			}
+			query += qkm.getTableAlias() + "." + QuoteKeywordManager.KEYWORD_ID + createInClause(keywords.size());
+		}
+		
+		if((authors != null) && (!authors.isEmpty())) {
+			if(!whereDefined) {
+				query += " WHERE ";
+				whereDefined = true;
+			} else {
+				query += "AND ";
+			}
+			query += bam.getTableAlias() + "." + BookAuthorManager.AUTHOR_ID + createInClause(authors.size());
 		}
 		
 		if((sources != null) && (!sources.isEmpty())) {
@@ -188,6 +207,12 @@ public class QuoteManager extends EntityManager<Quote> {
 			
 			/* Define our filter values, at the same order of the query. */
 			int i = 1;
+			if((books != null) && (!books.isEmpty())) {
+				for(Book book : books) {
+					stmt.setLong(i, book.getId());
+					i++;
+				}
+			}
 			if((keywords != null) && (!keywords.isEmpty())) {
 				for(Keyword key : keywords) {
 					stmt.setLong(i, key.getId());
@@ -197,12 +222,6 @@ public class QuoteManager extends EntityManager<Quote> {
 			if((authors != null) && (!authors.isEmpty())) {
 				for(Author author : authors) {
 					stmt.setLong(i, author.getId());
-					i++;
-				}
-			}
-			if((books != null) && (!books.isEmpty())) {
-				for(Book book : books) {
-					stmt.setLong(i, book.getId());
 					i++;
 				}
 			}
