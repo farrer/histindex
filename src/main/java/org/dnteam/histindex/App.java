@@ -81,7 +81,12 @@ public class App extends Application {
 			public void handle(ActionEvent t) {
 				File file = fileChooser.showSaveDialog(primaryStage);
 				if (file != null) {
-					database = new Database(file.getAbsolutePath());
+					String fileName = file.getAbsolutePath();
+					if(fileName.endsWith(".db")) {
+						database = new Database(fileName);
+					} else {
+						database = new Database(fileName + ".db");
+					}
 					try {
 						database.createSchema();
 					} catch (SQLException e) {
@@ -101,12 +106,7 @@ public class App extends Application {
 			public void handle(ActionEvent t) {
 				File file = fileChooser.showOpenDialog(primaryStage);
 				if (file != null) {
-					String fileName = file.getAbsolutePath();
-					if(fileName.endsWith(".db")) {
-						database = new Database(fileName);
-					} else {
-						database = new Database(fileName + ".db");
-					}
+					database = new Database(file.getAbsolutePath());
 				}
 				setMenuAvailability();
 			}
