@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import org.dnteam.histindex.database.Database;
 import org.dnteam.histindex.database.Quote;
 import org.dnteam.histindex.database.QuoteManager;
+import org.dnteam.histindex.exporters.CSVExporter;
+import org.dnteam.histindex.exporters.Exporter;
 import org.dnteam.histindex.exporters.PdfExporter;
 import org.dnteam.histindex.widgets.AuthorSelector;
 import org.dnteam.histindex.widgets.BookSelector;
@@ -303,21 +305,40 @@ public class SearchFrame extends BaseFrame {
 		resultScene.getRoot().setDisable(true);
 		
 		final FileChooser fileChooser = new FileChooser();
-		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("PDF", "*.pdf"), new ExtensionFilter("Text", "*.txt"));
+		final ExtensionFilter pdfExtension = new ExtensionFilter("PDF", "*.pdf");
+		final ExtensionFilter csvExtension = new ExtensionFilter("CSV", "*.csv");
+		fileChooser.getExtensionFilters().addAll(pdfExtension, csvExtension);
 		File file = fileChooser.showSaveDialog(stage);
 		if (file != null) {
-			//TODO: get file extension before deciding for pdf.
-			PdfExporter exporter = new PdfExporter(database, resultList);
+			
+			/* Create the desired exporter by the defined extension. */
+			Exporter exporter = null;
+			String extension = "";
+			if(fileChooser.getSelectedExtensionFilter().equals(csvExtension)) {
+				exporter = new CSVExporter(database, resultList);
+				extension = ".csv";
+			}
+			else /*if(fileChooser.getSelectedExtensionFilter().equals(pdfExtension))*/ {			
+				exporter = new PdfExporter(database, resultList);
+				extension = ".pdf";
+			} 
+			
+			/* Do the export */
 			try {
+				String fileName = file.getAbsolutePath();
+				if(!fileName.endsWith(extension)) {
+					fileName += extension;
+				}
 				exporter.generate(keywords.getSelected(), books.getSelected(), 
 						authors.getSelected(), sources.getSelected(), text.getText());
-				exporter.export(file.getAbsolutePath());
-				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported.");
+				exporter.export(fileName);
+				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported");
 				alert.showAndWait();
 			} catch (ReportGenerationException e) {
 				exporter.release();
 				showError("Error while exporting results: '" + e.getMessage() + "'");
 			}
+			
 		}
 		
 		resultScene.getRoot().setDisable(false);
