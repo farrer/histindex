@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.dnteam.histindex.database.Database;
 import org.dnteam.histindex.database.Entity;
 import org.dnteam.histindex.exporters.ExporterFonts;
+import org.dnteam.histindex.frames.AboutFrame;
 import org.dnteam.histindex.frames.AuthorEditFrame;
 import org.dnteam.histindex.frames.AuthorListFrame;
 import org.dnteam.histindex.frames.BookEditFrame;
@@ -33,6 +34,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -111,6 +113,15 @@ public class App extends Application {
 				setMenuAvailability();
 			}
 		});
+		
+		MenuItem aboutItem = new MenuItem("About", new ImageView(new Image("icons/information.png")));
+		aboutItem.setAccelerator(
+			      new KeyCodeCombination(KeyCode.F5, KeyCombination.CONTROL_DOWN, KeyCombination.SHORTCUT_DOWN));
+		aboutItem.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent t) {
+				new AboutFrame(getHostServices());
+			}
+		});
 
 		/* Exit */
 		MenuItem exitItem = new MenuItem("Exit", new ImageView(new Image("icons/door_out.png")));
@@ -123,7 +134,8 @@ public class App extends Application {
 		});
 
 		/* Add our items and done */
-		menuFile.getItems().addAll(newItem, loadItem, exitItem);
+		menuFile.getItems().addAll(newItem, loadItem, new SeparatorMenuItem(), 
+				aboutItem, new SeparatorMenuItem(), exitItem);
 		return menuFile;
 	}
 	
