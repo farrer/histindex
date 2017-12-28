@@ -105,7 +105,7 @@ public class App extends Application {
 					if(fileName.endsWith(".db")) {
 						database = new Database(fileName);
 					} else {
-						database = new Database(fileName);
+						database = new Database(fileName + ".db");
 					}
 				}
 				setMenuAvailability();
