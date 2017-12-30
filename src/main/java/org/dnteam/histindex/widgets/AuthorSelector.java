@@ -2,7 +2,7 @@ package org.dnteam.histindex.widgets;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 
 import org.dnteam.histindex.database.Author;
 import org.dnteam.histindex.database.AuthorManager;
@@ -29,7 +29,7 @@ public class AuthorSelector extends EntitySelector<Author> {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void loadRelated(Connection conn, Collection<Author> values) throws SQLException {
+	protected void loadRelated(Connection conn, List<Author> values) throws SQLException {
 	}
 	
 

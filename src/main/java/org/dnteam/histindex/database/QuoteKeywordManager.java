@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.dnteam.histindex.util.Tuple;
 
@@ -133,14 +133,30 @@ public class QuoteKeywordManager extends ComposedEntityManager<QuoteKeyword> {
 	   }
 	}
 	
-	/** Populate a {@link Collection} of quotes with its referenced {@link Keyword}s.
+	/** Populate a {@link List} of quotes with its referenced {@link Keyword}s.
 	 * @param conn connection to use.
-	 * @param data {@link Collection} of {@link Quote}s to populate its {@link Keyword}s.
+	 * @param data {@link List} of {@link Quote}s to populate its {@link Keyword}s.
 	 * @throws SQLException */
-	public void populateKeywords(Connection conn, Collection<Quote> data) throws SQLException {
+	public void populateKeywords(Connection conn, List<Quote> data) throws SQLException {
 		
 		if(data.size() == 0) {
 			/* Nothing to set. */
+			return;
+		}
+		
+		if(data.size() > MAX_WHERE_ELEMENTS) {
+			/* We should do more than one database search, to avoid SQL errors of max limit reached. */
+			int init = 0;
+			int end;
+			do {
+				end = init + MAX_WHERE_ELEMENTS;
+				if(end > data.size()) {
+					end = data.size();
+				}
+				populateKeywords(conn, data.subList(init, end));
+				init += MAX_WHERE_ELEMENTS;
+			} while(init + MAX_WHERE_ELEMENTS < data.size());
+			
 			return;
 		}
 		

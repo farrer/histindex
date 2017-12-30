@@ -2,7 +2,7 @@ package org.dnteam.histindex.widgets;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 
 import org.dnteam.histindex.database.Entity;
 import org.dnteam.histindex.database.EntityManager;
@@ -121,6 +121,6 @@ public abstract class EntitySelector<T extends Entity> {
 	 * For example, for a Book, should load its Authors.
 	 * @param conn {@link Connection} to use.
 	 * @param values loaded values to load its related information. */
-	protected abstract void loadRelated(Connection conn, Collection<T> values) throws SQLException;
+	protected abstract void loadRelated(Connection conn, List<T> values) throws SQLException;
 
 }

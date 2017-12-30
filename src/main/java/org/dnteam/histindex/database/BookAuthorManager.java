@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.dnteam.histindex.util.Tuple;
 
@@ -139,10 +139,25 @@ public class BookAuthorManager extends ComposedEntityManager<BookAuthor> {
 	 * @param conn connection to use.
 	 * @param data list with books to populate its authors.
 	 * @throws SQLException */
-	public void populateAuthors(Connection conn, Collection<Book> data) throws SQLException {
+	public void populateAuthors(Connection conn, List<Book> data) throws SQLException {
 		
 		if(data.size() == 0) {
 			/* Nothing to set. */
+			return;
+		}
+		if(data.size() > MAX_WHERE_ELEMENTS) {
+			/* Must split the populate action between N searches */
+			int init = 0;
+			int end;
+			do {
+				end = init + MAX_WHERE_ELEMENTS;
+				if(end > data.size()) {
+					end = data.size();
+				}
+				populateAuthors(conn, data.subList(init, end));
+				init += MAX_WHERE_ELEMENTS;
+			} while(init + MAX_WHERE_ELEMENTS < data.size());
+
 			return;
 		}
 		

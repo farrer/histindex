@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.dnteam.histindex.util.StringUtil;
 
@@ -272,8 +273,8 @@ public class QuoteManager extends EntityManager<Quote> {
 	public void populateRelatedInfo(Connection conn, List<Quote> data) throws SQLException {
 		
 		/* Construct the list of bookids and sourceids to load */
-		List<Long> bookIds = new ArrayList<Long>();
-		List<Long> sourceIds = new ArrayList<Long>();
+		TreeSet<Long> bookIds = new TreeSet<Long>();
+		TreeSet<Long> sourceIds = new TreeSet<Long>();
 		
 		for(Quote quote : data) {
 			if(quote.getBookId() != 0) {
@@ -286,13 +287,13 @@ public class QuoteManager extends EntityManager<Quote> {
 		
 		/* Load our books with authors */
 		BookManager bookManager = BookManager.getSingleton();
-		List<Book> bookList = bookManager.load(conn, bookIds);
+		List<Book> bookList = bookManager.load(conn, new ArrayList<Long>(bookIds));
 		BookAuthorManager.getSingleton().populateAuthors(conn, bookList);
 		HashMap<Long, Book> books = bookManager.createHashMap(bookList);
 		
 		/* Load our sources */
 		SourceManager sourceManager = SourceManager.getSingleton();
-		HashMap<Long, Source> sources = sourceManager.createHashMap(sourceManager.load(conn, sourceIds));
+		HashMap<Long, Source> sources = sourceManager.createHashMap(sourceManager.load(conn, new ArrayList<Long>(sourceIds)));
 		
 		/* Let's populate our quotes with its books and sources */
 		for(Quote quote : data) {

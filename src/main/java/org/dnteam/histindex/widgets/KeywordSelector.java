@@ -2,7 +2,7 @@ package org.dnteam.histindex.widgets;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 
 import org.dnteam.histindex.database.EntityManager;
 import org.dnteam.histindex.database.Keyword;
@@ -28,7 +28,7 @@ public class KeywordSelector extends EntitySelector<Keyword> {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void loadRelated(Connection conn, Collection<Keyword> values) throws SQLException {
+	protected void loadRelated(Connection conn, List<Keyword> values) throws SQLException {
 	}
 
 }

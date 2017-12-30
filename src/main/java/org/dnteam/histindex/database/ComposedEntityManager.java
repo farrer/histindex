@@ -15,6 +15,8 @@ import org.dnteam.histindex.util.Tuple;
  * @param <T> Entity which will manage.
  */
 public abstract class ComposedEntityManager<T extends ComposedEntity<?, ?>> {
+	
+	protected static final int MAX_WHERE_ELEMENTS = 400;
 
 	/** Insert the Entity to its database.
 	 * @param db Database to use.

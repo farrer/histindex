@@ -18,6 +18,8 @@ import java.util.List;
  * @param <T> Entity which will manage.
  */
 public abstract class EntityManager <T extends Entity> {
+	
+	protected static final int MAX_WHERE_ELEMENTS = 400;
 
 	/** Insert the Entity to its database.
 	 * @param db Database to use.
@@ -253,10 +255,26 @@ public abstract class EntityManager <T extends Entity> {
 	 * @param ids identifiers of the Entities to load.
 	 * @return List of loaded entities.
 	 * @throws SQLException. */
-	public List<T> load(Connection conn, Collection<Long> ids) throws SQLException {
+	public List<T> load(Connection conn, List<Long> ids) throws SQLException {
 		
 		if(ids.size() == 0) {
 			return new ArrayList<T>(0);
+		}
+		if(ids.size() > MAX_WHERE_ELEMENTS) {
+			/* Must split the populate action between N searches and merge the results */
+			List<T> totalResults = new ArrayList<T>();
+			int init = 0;
+			int end;
+			do {
+				end = init + MAX_WHERE_ELEMENTS;
+				if(end > ids.size()) {
+					end = ids.size();
+				}
+				totalResults.addAll(load(conn, ids.subList(init, end)));
+				init += MAX_WHERE_ELEMENTS;
+			} while(init + MAX_WHERE_ELEMENTS < ids.size());
+
+			return totalResults;
 		}
 		
 		final String tableAlias = getTableAlias();
