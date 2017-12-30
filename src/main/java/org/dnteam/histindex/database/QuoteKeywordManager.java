@@ -155,7 +155,7 @@ public class QuoteKeywordManager extends ComposedEntityManager<QuoteKeyword> {
 				}
 				populateKeywords(conn, data.subList(init, end));
 				init += MAX_WHERE_ELEMENTS;
-			} while(init + MAX_WHERE_ELEMENTS < data.size());
+			} while(init < data.size());
 			
 			return;
 		}

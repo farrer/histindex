@@ -272,7 +272,7 @@ public abstract class EntityManager <T extends Entity> {
 				}
 				totalResults.addAll(load(conn, ids.subList(init, end)));
 				init += MAX_WHERE_ELEMENTS;
-			} while(init + MAX_WHERE_ELEMENTS < ids.size());
+			} while(init < ids.size());
 
 			return totalResults;
 		}

@@ -156,7 +156,7 @@ public class BookAuthorManager extends ComposedEntityManager<BookAuthor> {
 				}
 				populateAuthors(conn, data.subList(init, end));
 				init += MAX_WHERE_ELEMENTS;
-			} while(init + MAX_WHERE_ELEMENTS < data.size());
+			} while(init < data.size());
 
 			return;
 		}
