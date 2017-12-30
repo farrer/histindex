@@ -65,7 +65,7 @@ public class Quote extends Entity {
 				val += c;
 			}
 			if(!StringUtil.isEmpty(val)) {
-				Integer.decode(val);
+				pageAsNumber = Integer.decode(val);
 			} else {
 				pageAsNumber = 0;
 			}
