@@ -223,7 +223,19 @@ public abstract class Exporter {
 			
 			generator.setTextAlignment(ReportTextAlignment.LEFT);
 			generator.beginTableCell();
-			generator.addText(quote.getText());
+			
+			/* Break our text in lines */
+			String[] lines = quote.getText().split(String.valueOf('\n'));
+			int curLine = 0;
+			for(String textLine : lines) {
+				generator.addText(textLine);
+				curLine++;
+				if(curLine != lines.length) {
+					generator.addLineBreak();
+				}
+			}
+			
+			/* Add our single line comment. */
 			if(!StringUtil.isEmpty(quote.getComment())) {
 				generator.setItalic(true);
 				generator.addText("[" + quote.getComment() + "]");
