@@ -14,6 +14,8 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -47,10 +49,14 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		table.setOnMousePressed(new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
 		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-		      	  T selected = table.getSelectionModel().getSelectedItem();
-		      	  if(selected != null) {
-		      		  openEditFrame(selected);
-		      	  }
+		      	  openEditForSelection();
+		        }
+		    }
+		});
+		table.setOnKeyReleased(new EventHandler<KeyEvent>() {
+		    public void handle(KeyEvent event) {
+		        if (event.getCode() == KeyCode.ENTER) {
+		      	  openEditForSelection();
 		        }
 		    }
 		});
@@ -61,6 +67,14 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		stage.show();
 	}
 	
+	/** Open its Edit frame for the current selected item on table (if any). */
+	private void openEditForSelection() {
+		T selected = table.getSelectionModel().getSelectedItem();
+		if(selected != null) {
+			openEditFrame(selected);
+		}
+	}
+	
 	/** Populate the {@link TableView} with {@link Entity} elements.*/
 	protected void populate() {
 		defineColumns(table);
@@ -68,8 +82,7 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 			load(conn);
 		} catch (SQLException e) {
 			showError("Couldn't load (" + e.getMessage() + ")");
-		}
-		
+		}	
 	}
 	
 	/** Load our values from database, populating our TableView.
