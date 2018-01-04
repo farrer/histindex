@@ -30,6 +30,8 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 	protected final Database database;
 	/** The frame used */
 	protected final Stage stage;
+	/** The scene used */
+	protected final Scene scene;
 	/** If inserting or updating */
 	private final T entity;
 	/** If someone called us, we should update it after save. */
@@ -101,13 +103,16 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 			bottom.getChildren().addAll(buttonInsert, buttonCancel);
 		}
 		root.setBottom(bottom);
-		
-      stage.setScene(new Scene(root));
-      stage.show();
+
+		scene = new Scene(root);
+		stage.setScene(scene);
+		stage.show();
 	}
 	
 	/** Save (by insert or update) the current editing entity */
 	protected void onSaveButtonClick() {
+		
+		scene.getRoot().setDisable(true);
 		
 		/* FIXME: Note that here we aren't doing any concurrency check, as if the user
 		 * opened more than one instance for the same entity, the most recently
@@ -138,12 +143,15 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 			} catch (SQLException e) {
 				showError("Couldn't save (" + e.getMessage() + ")");
 			}
-
 		}
+		
+		scene.getRoot().setDisable(false);
 	}
 	
 	/** Delete the current editing entity */
 	protected void onDeleteButtonClick() {
+		
+		scene.getRoot().setDisable(true);
 		
 		try(Connection conn = DriverManager.getConnection(database.getURL())) {
 			doBeforeDelete(conn, this.entity);
@@ -160,6 +168,8 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 		} catch (SQLException e) {
 			showError("Couldn't delete (" + e.getMessage() + ")");
 		}
+		
+		scene.getRoot().setDisable(false);
 
 	}
 	
