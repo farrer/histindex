@@ -24,7 +24,7 @@ import javafx.stage.Stage;
  * @author farrer
  *
  * @param T type of the {@link Entity} to list values. */
-public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
+public abstract class BaseListFrame <T extends Entity> extends BaseSelectFrame<T> {
 	
 	/** The database to use */
 	protected final Database database;
@@ -49,14 +49,14 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		table.setOnMousePressed(new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
 		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-		      	  openEditForSelection();
+		      	  openEditForSelection(table.getSelectionModel().getSelectedItem());
 		        }
 		    }
 		});
 		table.setOnKeyReleased(new EventHandler<KeyEvent>() {
 		    public void handle(KeyEvent event) {
 		        if (event.getCode() == KeyCode.ENTER) {
-		      	  openEditForSelection();
+		      	  openEditForSelection(table.getSelectionModel().getSelectedItem());
 		        }
 		    }
 		});
@@ -65,14 +65,6 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		
 		stage.setScene(new Scene(root));
 		stage.show();
-	}
-	
-	/** Open its Edit frame for the current selected item on table (if any). */
-	private void openEditForSelection() {
-		T selected = table.getSelectionModel().getSelectedItem();
-		if(selected != null) {
-			openEditFrame(selected);
-		}
 	}
 	
 	/** Populate the {@link TableView} with {@link Entity} elements.*/
@@ -85,8 +77,8 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		}	
 	}
 	
-	/** Load our values from database, populating our TableView.
-	 * @param conn {@link Connection} to use. */
+	/** {@inheritDoc} */
+	@Override
 	public void load(Connection conn) {
 		try {
 			ObservableList<T> data = FXCollections.observableArrayList(getManager().loadAll(database));
@@ -95,6 +87,12 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 		} catch (SQLException e) {
 			showError("Couldn't load (" + e.getMessage() + ")");
 		}
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void refresh() {
+		table.refresh();
 	}
 	
 	/** Load related data from the database for the result from default fetchAll query.
@@ -112,9 +110,5 @@ public abstract class BaseListFrame <T extends Entity> extends BaseFrame {
 	/** Define all columns (but do not populate them) of the {@link TableView} to use.
 	 * @param table {@link TableView} to define its columns. */
 	protected abstract void defineColumns(TableView<T> table);
-	
-	/** Open the EditFrame for a selected {@link Entity}.
-	 * @param entity instance of {@link Entity} to open its edit frame. */
-	protected abstract void openEditFrame(T entity);
 
 }

@@ -48,7 +48,7 @@ public class QuoteEditFrame extends BaseEditFrame<Quote> {
 	 * @param database database to use.
 	 * @param quote quote to update.
 	 * @param caller if was called from a list or not. */
-	public QuoteEditFrame(Database database, Quote quote, BaseListFrame<Quote> caller) {
+	public QuoteEditFrame(Database database, Quote quote, BaseSelectFrame<Quote> caller) {
 		super(database, "Quote", quote, caller);
 	}
 

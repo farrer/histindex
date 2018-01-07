@@ -35,12 +35,14 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 	/** If inserting or updating */
 	private final T entity;
 	/** If someone called us, we should update it after save. */
-	private final BaseListFrame<T> caller;
+	private final BaseSelectFrame<T> caller;
 
 	/** Default constructor.
 	 * @param title title of the stage to open.
-	 * @param entity {@link Entity} to edit, if updating. On inserting just pass null. */
-	public BaseEditFrame(Database database, String title, T entity, BaseListFrame<T> caller) {
+	 * @param entity {@link Entity} to edit, if updating. On inserting just pass null. 
+	 * @param caller {@link BaseSelectFrame} instance that called to edit a {@link Entity}, or <code>null</code> 
+	 *               if called from menu or shortcut. */
+	public BaseEditFrame(Database database, String title, T entity, BaseSelectFrame<T> caller) {
 		
 		this.database = database;
 		this.caller = caller;
@@ -138,7 +140,7 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 				
 				/* Update our caller, if any */
 				if(caller != null) {
-					caller.load(conn);
+					caller.refresh();
 				}
 			} catch (SQLException e) {
 				showError("Couldn't save (" + e.getMessage() + ")");
@@ -164,6 +166,7 @@ public abstract class BaseEditFrame<T extends Entity> extends BaseFrame {
 			/* Update our caller, if any */
 			if(caller != null) {
 				caller.load(conn);
+				caller.refresh();
 			}
 		} catch (SQLException e) {
 			showError("Couldn't delete (" + e.getMessage() + ")");

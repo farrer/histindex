@@ -47,7 +47,7 @@ import net.sf.nervalreports.core.ReportGenerationException;
 
 /** Frame used to create and display {@link Quote} searches.
  * @author farrer */
-public class SearchFrame extends BaseFrame {
+public class SearchFrame extends BaseSelectFrame<Quote> {
 	
 	private final Database database;
 	private Stage stage;
@@ -58,6 +58,7 @@ public class SearchFrame extends BaseFrame {
 	private TextField text;
 	private Scene searchScene;
 	private ObservableList<Quote> resultList;
+	private TableView<Quote> resultTable;
 	private TextArea quoteText;
 	private TextArea comment;
 	private TextArea keys;
@@ -187,9 +188,9 @@ public class SearchFrame extends BaseFrame {
 		root.setRight(right);
 		
 		/* At center, our result grid */
-		TableView<Quote> resultTable = new TableView<Quote>();
+		resultTable = new TableView<Quote>();
 		resultTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		resultTable.setTooltip(new Tooltip("Double-click on selection to remove from result."));
+		resultTable.setTooltip(new Tooltip("Double-click on selection to edit. Press DELETE key to remove from result."));
 		resultTable.setPrefWidth(800);
 		resultTable.setItems(resultList);
 		
@@ -215,8 +216,8 @@ public class SearchFrame extends BaseFrame {
 		resultTable.getColumns().add(pageCol);
 		resultTable.setOnMousePressed(new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
-		    	if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-		    		removeSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	if(event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+		    		openEditForSelection(resultTable.getSelectionModel().getSelectedItem());
 		    	} else {
 		    		setSelected(resultTable.getSelectionModel().getSelectedItem());
 		    	}
@@ -224,8 +225,12 @@ public class SearchFrame extends BaseFrame {
 		});
 		resultTable.setOnKeyReleased(new EventHandler<KeyEvent>() {
 		    public void handle(KeyEvent event) {
-		    	if (event.getCode() == KeyCode.DELETE) {
+		    	if(event.getCode() == KeyCode.DELETE) {
+		    		/* Remove from list */
 		    		removeSelected(resultTable.getSelectionModel().getSelectedItem());
+		    	} else if(event.getCode() == KeyCode.ENTER) {
+		    		/* Edit it */
+		    		openEditForSelection(resultTable.getSelectionModel().getSelectedItem());
 		        } else {
 		        	/* Show the current selection full text */
 		        	setSelected(resultTable.getSelectionModel().getSelectedItem());
@@ -343,6 +348,24 @@ public class SearchFrame extends BaseFrame {
 		
 		resultScene.getRoot().setDisable(false);
 		
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void load(Connection conn) {
+		onSeachButtonClick();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void refresh() {
+		resultTable.refresh();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected void openEditFrame(Quote quote) {
+		new QuoteEditFrame(database, quote, this);
 	}
 
 }
