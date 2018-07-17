@@ -58,12 +58,13 @@ public abstract class Exporter {
 
 	/** Generate the export to the ReportGenerator. But without saving it yet to a file.
 	 * @param searchKeywords {@link Keyword}s that was used on search query, if any.
+	 * @param andKeys if {@link Keyword}s should use AND (true) or OR (false) as connector.
 	 * @param searchBooks {@link Book}s that was used on search query, if any.
 	 * @param searchAuthors {@link Author}s that was used on search query, if any.
 	 * @param searchSources {@link Source}s that was used on search query, if any.
 	 * @param searchText String with text that was used on search query, as a like statement.
 	 * @throws ReportGenerationException */
-	public void generate(Collection<Keyword> searchKeywords, Collection<Book> searchBooks, 
+	public void generate(Collection<Keyword> searchKeywords, boolean andKeys, Collection<Book> searchBooks, 
 			Collection<Author> searchAuthors, Collection<Source> searchSources, String searchText) 
 					throws ReportGenerationException {
 		generator.beginDocument();
@@ -90,7 +91,7 @@ public abstract class Exporter {
 			}
 		
 			/* Search Information */
-			generateSearchInformation(searchKeywords, searchBooks, searchAuthors, searchSources, searchText);
+			generateSearchInformation(searchKeywords, andKeys, searchBooks, searchAuthors, searchSources, searchText);
 			
 			/* We should use tables with borders from now on. */
 			generator.setTableBorderStyle(0.5f, ReportColors.BLACK);
@@ -149,12 +150,12 @@ public abstract class Exporter {
 		if(builder.length() > 0) {
 			generator.addText(builder.toString());
 		} else {
-			generator.addText("Any");
+			generator.addText("*");
 		}
 	}
 	
 	/** Generate a information about the search that originated this data. */
-	protected void generateSearchInformation(Collection<Keyword> searchKeywords, Collection<Book> searchBooks, 
+	protected void generateSearchInformation(Collection<Keyword> searchKeywords, boolean andKeys, Collection<Book> searchBooks, 
 			Collection<Author> searchAuthors, Collection<Source> searchSources, String searchText) throws ReportGenerationException {
 		generator.setBold(true);
 		generator.addText("Text:");
@@ -167,6 +168,13 @@ public abstract class Exporter {
 		generator.addLineBreak();
 		
 		generateSearchInfoForEntity(generator, "Keywords", searchKeywords);
+		generator.setBold(true);
+		if(andKeys) {
+			generator.addText(" (ALL)");
+		} else {
+			generator.addText(" (ANY)");
+		}
+		generator.setBold(false);
 		generator.addLineBreak();
 		generateSearchInfoForEntity(generator, "Authors", searchAuthors);
 		generator.addLineBreak();

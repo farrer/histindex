@@ -334,8 +334,9 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 				if(!fileName.endsWith(extension)) {
 					fileName += extension;
 				}
-				exporter.generate(keywords.getSelected(), books.getSelected(), 
-						authors.getSelected(), sources.getSelected(), text.getText());
+				exporter.generate(keywords.getSelected(), keywords.isAndSelected(),
+						books.getSelected(), authors.getSelected(), 
+						sources.getSelected(), text.getText());
 				exporter.export(fileName);
 				Alert alert = new Alert(AlertType.INFORMATION, "The search was exported");
 				alert.showAndWait();
