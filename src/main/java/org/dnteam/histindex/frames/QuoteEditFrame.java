@@ -116,8 +116,8 @@ public class QuoteEditFrame extends BaseEditFrame<Quote> {
 		
 		quoteComment = new TextField();
 		quoteComment.setText(quote.getComment());
-		grid.add(new Label("Comment: "), 0, 6);
-		grid.add(quoteComment, 1, 6);
+		grid.add(new Label("Comment: "), 0, 7);
+		grid.add(quoteComment, 1, 7);
 	}
 
 	/** {@inheritDoc} */

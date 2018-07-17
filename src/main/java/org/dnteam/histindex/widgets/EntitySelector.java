@@ -95,9 +95,9 @@ public abstract class EntitySelector<T extends Entity> {
 		
 		if(andOrRadio) {
 			andOrToggle = new ToggleGroup();
-		    andRadioButton = new RadioButton("AND");
+		    andRadioButton = new RadioButton("All");
 		    andRadioButton.setToggleGroup(andOrToggle);
-		    orRadioButton = new RadioButton("OR");
+		    orRadioButton = new RadioButton("Any");
 		    orRadioButton.setToggleGroup(andOrToggle);
 		    orRadioButton.setSelected(true);
 		    grid.add(andRadioButton, gridX, gridY + 1);
