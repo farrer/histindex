@@ -18,7 +18,7 @@ public class AuthorSelector extends EntitySelector<Author> {
 	/** @see EntitySelector#EntitySelector */
 	public AuthorSelector(Connection conn, GridPane grid, int gridX, int gridY, 
 			ObservableList<Author> current) throws SQLException {
-		super(conn, grid, gridX, gridY, "Author", "Author(s)", "fullName", current);
+		super(conn, grid, gridX, gridY, "Author", "Author(s)", "fullName", current, false);
 	}
 
 	/** {@inheritDoc} */

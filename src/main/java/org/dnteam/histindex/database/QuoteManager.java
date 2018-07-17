@@ -132,13 +132,14 @@ public class QuoteManager extends EntityManager<Quote> {
 	/** Search for {@link Quote}s, filtering by all its relations.
 	 * @param conn {@link Connection} to use.
 	 * @param keywords {@link Keyword}s to filter, if any.
+	 * @param andKeys <code>true</code> to use 'and' between keywords, false to use 'or'.
 	 * @param books {@link Book}s to filter, if any.
 	 * @param authors {@link Author}s to filter, if any.
 	 * @param sources {@link Source}s to filter, if any.
 	 * @param text String with text to filter, as a like statement.
 	 * @return List of {@link Quote}s found.
 	 * @throws SQLException */
-	public List<Quote> search(Connection conn, Collection<Keyword> keywords, Collection<Book> books, 
+	public List<Quote> search(Connection conn, Collection<Keyword> keywords, boolean andKeys, Collection<Book> books, 
 			Collection<Author> authors, Collection<Source> sources, String text) throws SQLException {
 		
 		QuoteKeywordManager qkm = QuoteKeywordManager.getSingleton();
@@ -170,7 +171,35 @@ public class QuoteManager extends EntityManager<Quote> {
 			} else {
 				query += "AND ";
 			}
-			query += qkm.getTableAlias() + "." + QuoteKeywordManager.KEYWORD_ID + createInClause(keywords.size());
+			if(!andKeys) {
+				query += qkm.getTableAlias() + "." + QuoteKeywordManager.KEYWORD_ID + createInClause(keywords.size());
+			} else {
+
+				/* Create the clause for quote with all keywords at the same time. */
+				query += " ( ";
+				for(int cur = 0; cur < keywords.size(); cur++) {
+					
+					if(cur > 0) {
+						query += " AND ";
+						query += qkm.getTableAlias() + "." + QuoteKeywordManager.QUOTE_ID;
+						query += " IN ( ";
+						query += " SELECT " + qkm.getTableAlias() + "." + QuoteKeywordManager.QUOTE_ID;
+						query += " FROM " + qkm.getTableName() + " " + qkm.getTableAlias();
+						query += " WHERE ";
+					}
+					query += qkm.getTableAlias() + "." + QuoteKeywordManager.KEYWORD_ID;
+					query += " = ";
+					query += "?";
+					
+				}
+				
+				/* Close all opened ( */
+				for(int cur = 1; cur < keywords.size(); cur++) {
+					query += ")";
+				}
+				query += " ) ";
+
+			}
 		}
 		
 		if((authors != null) && (!authors.isEmpty())) {

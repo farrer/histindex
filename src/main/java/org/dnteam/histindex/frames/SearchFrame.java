@@ -106,7 +106,7 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 		textBox.getChildren().addAll(textLabel, text);
 		
 		try(Connection conn = DriverManager.getConnection(database.getURL())) {
-			keywords = new KeywordSelector(conn, grid, 1, 2, FXCollections.observableArrayList());
+			keywords = new KeywordSelector(conn, grid, 1, 2, FXCollections.observableArrayList(), true);
 			keywords.setWidth(300);
 			authors = new AuthorSelector(conn, grid, 4, 2, FXCollections.observableArrayList());
 			authors.setWidth(300);
@@ -292,8 +292,8 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 		try(Connection conn = DriverManager.getConnection(database.getURL())) {
 			QuoteManager qm = QuoteManager.getSingleton();
 			
-			resultList.addAll(qm.search(conn, keywords.getSelected(), books.getSelected(), 
-					authors.getSelected(), sources.getSelected(), text.getText()));
+			resultList.addAll(qm.search(conn, keywords.getSelected(), keywords.isAndSelected(),
+					books.getSelected(), authors.getSelected(), sources.getSelected(), text.getText()));
 			QuoteManager.getSingleton().populateRelatedInfo(conn, resultList);
 		} catch(SQLException e) {
 			showError("Error while searching: '" + e.getMessage() + "'");

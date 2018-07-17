@@ -16,8 +16,8 @@ import javafx.scene.layout.GridPane;
 public class KeywordSelector extends EntitySelector<Keyword> {
 
 	public KeywordSelector(Connection conn, GridPane grid, int gridX, int gridY,
-	      ObservableList<Keyword> current) throws SQLException {
-		super(conn, grid, gridX, gridY, "Keyword", "Keyword(s)", "name", current);
+	      ObservableList<Keyword> current, boolean andOrRadio) throws SQLException {
+		super(conn, grid, gridX, gridY, "Keyword", "Keyword(s)", "name", current, andOrRadio);
 	}
 
 	/** {@inheritDoc} */

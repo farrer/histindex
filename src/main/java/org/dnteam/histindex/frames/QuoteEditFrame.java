@@ -60,7 +60,7 @@ public class QuoteEditFrame extends BaseEditFrame<Quote> {
 			allBooks = FXCollections.observableArrayList(BookManager.getSingleton().loadAll(conn));
 			BookAuthorManager.getSingleton().populateAuthors(conn, allBooks);
 			allSources = FXCollections.observableArrayList(SourceManager.getSingleton().loadAll(conn));
-			keywordSelector = new KeywordSelector(conn, grid, 0, 4, quote.getKeywordsCopy());
+			keywordSelector = new KeywordSelector(conn, grid, 0, 4, quote.getKeywordsCopy(), false);
 			
 			/* Populate entity, if not already populated */
 			if((quote.getBookId() != 0) && (quote.getBook() == null)) {

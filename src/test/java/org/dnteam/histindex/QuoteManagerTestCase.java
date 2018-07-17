@@ -93,19 +93,19 @@ public class QuoteManagerTestCase extends EntityManagerTestCase<Quote> {
 			ArrayList<Book> bookList = new ArrayList<Book>();
 			bookList.add(bookA);
 			Collection<Quote> quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
+					new ArrayList<Keyword>(), false, bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
 			assert(quotes.size() == 0);
 			
 			bookList.clear();
 			bookList.add(bookB);
 			quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
+					new ArrayList<Keyword>(), false, bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
 			assert(quotes.size() == 2);
 			
 			ArrayList<Source> sourceList = new ArrayList<Source>();
 			sourceList.add(sourceA);
 			quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
+					new ArrayList<Keyword>(), false, new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
 			assert(quotes.size() == 4);
 		}
 	}
@@ -144,19 +144,19 @@ public class QuoteManagerTestCase extends EntityManagerTestCase<Quote> {
 			ArrayList<Book> bookList = new ArrayList<Book>();
 			bookList.add(bookA);
 			Collection<Quote> quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
+					new ArrayList<Keyword>(), false, bookList,	new ArrayList<Author>(), new ArrayList<Source>(), "");
 			assert(quotes.size() == 3);
 			
 			ArrayList<Source> sourceList = new ArrayList<Source>();
 			sourceList.add(sourceA);
 			quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
+					new ArrayList<Keyword>(), false, new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
 			assert(quotes.size() == 0);
 			
 			sourceList.clear();
 			sourceList.add(sourceB);
 			quotes = QuoteManager.getSingleton().search(conn, 
-					new ArrayList<Keyword>(), new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
+					new ArrayList<Keyword>(), false, new ArrayList<Book>(),	new ArrayList<Author>(), sourceList, "");
 			assert(quotes.size() == 3);
 		}
 	}
@@ -218,23 +218,29 @@ public class QuoteManagerTestCase extends EntityManagerTestCase<Quote> {
 			Collection<Quote> res;
 			Collection<Keyword> keys = new ArrayList<Keyword>();
 			keys.add(mutapa);
-			res = QuoteManager.getSingleton().search(conn, keys, new ArrayList<Book>(), new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, keys, false, new ArrayList<Book>(), new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			assert(res.size() == 9);
 			
 			keys.add(ivory);
-			res = QuoteManager.getSingleton().search(conn, keys, new ArrayList<Book>(), new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, keys, false, new ArrayList<Book>(), new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			assert(res.size() == 13);
+			res = QuoteManager.getSingleton().search(conn, keys, true, new ArrayList<Book>(), new ArrayList<Author>(), 
+					new ArrayList<Source>(), "");
+			assert(res.size() == 2);
 			
 			keys.add(gold);
-			res = QuoteManager.getSingleton().search(conn, keys, new ArrayList<Book>(), new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, keys, false, new ArrayList<Book>(), new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			assert(res.size() == 15);
+			res = QuoteManager.getSingleton().search(conn, keys, true, new ArrayList<Book>(), new ArrayList<Author>(), 
+					new ArrayList<Source>(), "");
+			assert(res.size() == 0);
 			
 			Collection<Book> books = new ArrayList<Book>();
 			books.add(bookA);
-			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), books, new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, books, new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			/* Check result size */
 			assert(res.size() == 4);
@@ -249,37 +255,37 @@ public class QuoteManagerTestCase extends EntityManagerTestCase<Quote> {
 			/* BookA and Mutapa */
 			keys.clear();
 			keys.add(mutapa);
-			res = QuoteManager.getSingleton().search(conn, keys, books, new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, keys, false, books, new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			assert(res.size() == 3);
 			
 			/* BookA and BookC and Mutapa */
 			books.add(bookC);
-			res = QuoteManager.getSingleton().search(conn, keys, books, new ArrayList<Author>(), 
+			res = QuoteManager.getSingleton().search(conn, keys, false, books, new ArrayList<Author>(), 
 					new ArrayList<Source>(), "");
 			assert(res.size() == 5);
 			
 			/* SourceA */
 			Collection<Source> sources = new ArrayList<Source>();
 			sources.add(sourceA);
-			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), new ArrayList<Book>(), 
+			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, new ArrayList<Book>(), 
 					new ArrayList<Author>(), sources, "");
 			assert(res.size() == 2);
 			
 			/* AuthorD */
 			Collection<Author> authors = new ArrayList<Author>();
 			authors.add(authorD);
-			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), new ArrayList<Book>(), 
+			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, new ArrayList<Book>(), 
 					authors, new ArrayList<Source>(), "");
 			assert(res.size() == 4);
 			
 			/* Text filter */
-			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), new ArrayList<Book>(), 
+			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, new ArrayList<Book>(), 
 					new ArrayList<Author>(), new ArrayList<Source>(), "mine");
 			assert(res.size() == 1);
 			
 			/* Get all */
-			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), new ArrayList<Book>(), 
+			res = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, new ArrayList<Book>(), 
 					new ArrayList<Author>(), new ArrayList<Source>(), "");
 			/* Note: >= as the previous tests should inserted some quotes on database also. */
 			assert(res.size() >= 15);
@@ -341,7 +347,7 @@ public class QuoteManagerTestCase extends EntityManagerTestCase<Quote> {
 		try(Connection conn = DriverManager.getConnection(getDatabase().getURL()))	{
 			/* Get all quotes from database (note: should return more than we created on this test, as should
 			 * return quotes created on previous tests). */
-			quotes = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), new ArrayList<Book>(), 
+			quotes = QuoteManager.getSingleton().search(conn, new ArrayList<Keyword>(), false, new ArrayList<Book>(), 
 					new ArrayList<Author>(), new ArrayList<Source>(), "");
 			QuoteManager.getSingleton().populateRelatedInfo(conn, quotes);
 		}

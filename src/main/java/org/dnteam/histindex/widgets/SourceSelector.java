@@ -17,7 +17,7 @@ public class SourceSelector extends EntitySelector<Source> {
 
 	public SourceSelector(Connection conn, GridPane grid, int gridX, int gridY,
 	      ObservableList<Source> current) throws SQLException {
-		super(conn, grid, gridX, gridY, "Source", "Source(s)", "title", current);
+		super(conn, grid, gridX, gridY, "Source", "Source(s)", "title", current, false);
 	}
 
 	/** {@inheritDoc} */

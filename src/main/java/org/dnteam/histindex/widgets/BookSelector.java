@@ -18,7 +18,7 @@ public class BookSelector extends EntitySelector<Book> {
 
 	public BookSelector(Connection conn, GridPane grid, int gridX, int gridY, 
 	      ObservableList<Book> current) throws SQLException {
-		super(conn, grid, gridX, gridY, "Book/Article", "Book(s)/Article(s)", "description", current);
+		super(conn, grid, gridX, gridY, "Book/Article", "Book(s)/Article(s)", "description", current, false);
 	}
 
 	/** {@inheritDoc} */
