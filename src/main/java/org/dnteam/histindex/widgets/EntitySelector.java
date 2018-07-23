@@ -157,6 +157,26 @@ public abstract class EntitySelector<T extends Entity> {
 		return true;
 	}
 	
+	/** Enable the selector for use. */
+	public void enable() {
+		selector.setDisable(false);
+		table.setDisable(false);
+		if(andOrToggle != null) {
+			andRadioButton.setDisable(false);
+			orRadioButton.setDisable(false);
+		}
+	}
+	
+	/** Enable the selector for use. */
+	public void disable() {
+		selector.setDisable(true);
+		table.setDisable(true);
+		if(andOrToggle != null) {
+			andRadioButton.setDisable(true);
+			orRadioButton.setDisable(true);
+		}
+	}
+	
 	/** @return {@link EntityManager} for the implementor's {@link Entity}. */
 	protected abstract EntityManager<T> getEntityManager();
 	

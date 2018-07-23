@@ -26,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -53,7 +54,9 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 	private Stage stage;
 	private KeywordSelector keywords;
 	private AuthorSelector authors;
+	private CheckBox booksCheckBox;
 	private BookSelector books;
+	private CheckBox sourcesCheckBox;
 	private SourceSelector sources;
 	private TextField text;
 	private Scene searchScene;
@@ -110,9 +113,33 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 			keywords.setWidth(300);
 			authors = new AuthorSelector(conn, grid, 4, 2, FXCollections.observableArrayList());
 			authors.setWidth(300);
-			books = new BookSelector(conn, grid, 1, 6, FXCollections.observableArrayList());
+			booksCheckBox = new CheckBox("Use Books");
+			booksCheckBox.setSelected(true);
+			booksCheckBox.setOnAction(new EventHandler<ActionEvent>() {
+				public void handle(ActionEvent t) {
+					if(booksCheckBox.isSelected()) {
+						books.enable();
+					} else {
+						books.disable();
+					}
+				}
+			});
+			grid.add(booksCheckBox, 1, 6);
+			books = new BookSelector(conn, grid, 1, 7, FXCollections.observableArrayList());
 			books.setWidth(300);
-			sources = new SourceSelector(conn, grid, 4, 6, FXCollections.observableArrayList());
+			sourcesCheckBox = new CheckBox("Use Sources");
+			sourcesCheckBox.setSelected(true);
+			sourcesCheckBox.setOnAction(new EventHandler<ActionEvent>() {
+				public void handle(ActionEvent t) {
+					if(sourcesCheckBox.isSelected()) {
+						sources.enable();
+					} else {
+						sources.disable();
+					}
+				}
+			});
+			grid.add(sourcesCheckBox, 4, 6);
+			sources = new SourceSelector(conn, grid, 4, 7, FXCollections.observableArrayList());
 			sources.setWidth(300);
 		}
 		
@@ -293,7 +320,8 @@ public class SearchFrame extends BaseSelectFrame<Quote> {
 			QuoteManager qm = QuoteManager.getSingleton();
 			
 			resultList.addAll(qm.search(conn, keywords.getSelected(), keywords.isAndSelected(),
-					books.getSelected(), authors.getSelected(), sources.getSelected(), text.getText()));
+					booksCheckBox.isSelected(), books.getSelected(), authors.getSelected(), 
+					sourcesCheckBox.isSelected(), sources.getSelected(), text.getText()));
 			QuoteManager.getSingleton().populateRelatedInfo(conn, resultList);
 		} catch(SQLException e) {
 			showError("Error while searching: '" + e.getMessage() + "'");

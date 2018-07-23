@@ -133,14 +133,17 @@ public class QuoteManager extends EntityManager<Quote> {
 	 * @param conn {@link Connection} to use.
 	 * @param keywords {@link Keyword}s to filter, if any.
 	 * @param andKeys <code>true</code> to use 'and' between keywords, false to use 'or'.
+	 * @param useBooks to use books or not. If not, will only get quotes where "bookId = null".
 	 * @param books {@link Book}s to filter, if any.
 	 * @param authors {@link Author}s to filter, if any.
 	 * @param sources {@link Source}s to filter, if any.
+	 * @param useSources to use sources or not. If not, will only get quotes where "sourceId = null".
 	 * @param text String with text to filter, as a like statement.
 	 * @return List of {@link Quote}s found.
 	 * @throws SQLException */
-	public List<Quote> search(Connection conn, Collection<Keyword> keywords, boolean andKeys, Collection<Book> books, 
-			Collection<Author> authors, Collection<Source> sources, String text) throws SQLException {
+	public List<Quote> search(Connection conn, Collection<Keyword> keywords, boolean andKeys, 
+			boolean useBooks, Collection<Book> books, Collection<Author> authors, 
+			boolean useSources, Collection<Source> sources, String text) throws SQLException {
 		
 		QuoteKeywordManager qkm = QuoteKeywordManager.getSingleton();
 		BookAuthorManager bam = BookAuthorManager.getSingleton();
@@ -159,7 +162,11 @@ public class QuoteManager extends EntityManager<Quote> {
 		}
 		
 		boolean whereDefined = false;
-		if((books != null) && (!books.isEmpty())) {
+		if(!useBooks) {
+			whereDefined = true;
+			query += " WHERE " + getTableAlias() + "." + BOOK_ID + " IS NULL";
+		}
+		else if((books != null) && (!books.isEmpty())) {
 			whereDefined = true;
 			query += " WHERE " + getTableAlias() + "." + BOOK_ID + createInClause(books.size());
 		}
@@ -212,7 +219,16 @@ public class QuoteManager extends EntityManager<Quote> {
 			query += bam.getTableAlias() + "." + BookAuthorManager.AUTHOR_ID + createInClause(authors.size());
 		}
 		
-		if((sources != null) && (!sources.isEmpty())) {
+		if(!useSources) {
+			if(!whereDefined) {
+				query += " WHERE ";
+				whereDefined = true;
+			} else {
+				query += "AND ";
+			}
+			query += getTableAlias() + "." + SOURCE_ID + " IS NULL";
+		}
+		else if((sources != null) && (!sources.isEmpty())) {
 			if(!whereDefined) {
 				query += " WHERE ";
 				whereDefined = true;
