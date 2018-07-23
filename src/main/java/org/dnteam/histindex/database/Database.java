@@ -49,7 +49,7 @@ public class Database {
 			/* Sources */
 			stmt.execute("DROP TABLE IF EXISTS Sources;");
 			stmt.execute("CREATE TABLE IF NOT EXISTS "
-					+ "Sources(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title VarChar(255), ExtraInfo VarChar(255));");
+					+ "Sources(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title VarChar(255), Year Integer, ExtraInfo VarChar(255));");
 			/* BookAuthor */
 			stmt.execute("DROP TABLE IF EXISTS BookAuthor;");
 			stmt.execute("CREATE TABLE IF NOT EXISTS "

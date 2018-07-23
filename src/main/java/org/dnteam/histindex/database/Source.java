@@ -6,6 +6,8 @@ public class Source extends Entity {
 	
 	/** Source title */
 	private String title;
+	/** Source's year of production */
+	private int year;
 	/** Source text with some extra description information */
 	private String extraInfo;
 	
@@ -20,6 +22,18 @@ public class Source extends Entity {
 		this.title = title;
 	}
 	
+	/** @return {@link #year} */
+	public int getYear()
+	{
+		return year;
+	}
+
+	/** Set new {@link #year}.
+	 * @param title new {@link #year}. */
+	public void setYear(int year) {
+		this.year = year;
+	}
+
 	/** @return {@link #extraInfo}. */
 	public String getExtraInfo() {
 		return extraInfo;

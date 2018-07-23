@@ -11,6 +11,7 @@ public class SourceGenerator extends EntityGenerator<Source> {
 	private final Source source = new Source();
 	private boolean definedTitle = false;
 	private boolean definedExtraInfo = false;
+	private boolean definedYear = false;
 	
 	/** Define Source's title.
 	 * @param title new title.
@@ -29,6 +30,15 @@ public class SourceGenerator extends EntityGenerator<Source> {
 		definedExtraInfo = true;
 		return this;
 	}
+	
+	/** Define Source's year
+	 * @param year year of the source.
+	 * @return this. */
+	public SourceGenerator withYear(int year) {
+		source.setYear(year);
+		definedYear = true;
+		return this;
+	}
 
 	@Override
 	public SourceManager getManager() {
@@ -42,6 +52,9 @@ public class SourceGenerator extends EntityGenerator<Source> {
 		}
 		if(!definedExtraInfo) {
 			source.setExtraInfo("Without author, probably from the 1750s");
+		}
+		if(!definedYear) {
+			source.setYear(0);
 		}
 		return source;
 	}

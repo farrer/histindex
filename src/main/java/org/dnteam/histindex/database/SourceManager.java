@@ -10,13 +10,14 @@ public class SourceManager extends EntityManager<Source> {
 	
 	public static final String ID = "Id";
 	public static final String TITLE = "Title";
+	public static final String YEAR = "Year";
 	public static final String EXTRA_INFO = "ExtraInfo";
 	
 	/** The single instance of SourceManager */
 	private static final SourceManager SINGLETON =  new SourceManager();
 	/** Our columns */
-	private static final String[] COLUMNS = {TITLE, EXTRA_INFO};
-	private static final String[] ORDER_BY = {TITLE};
+	private static final String[] COLUMNS = {TITLE, YEAR, EXTRA_INFO};
+	private static final String[] ORDER_BY = {YEAR, TITLE};
 	/** Table name */
 	private static final String TABLE_NAME = "Sources";
 	/** Alias to use on queries */
@@ -64,16 +65,18 @@ public class SourceManager extends EntityManager<Source> {
 	@Override
 	protected int populateFromResultSet(ResultSet rs, Source entity, int i) throws SQLException {
 		entity.setTitle(rs.getString(i));
-		entity.setExtraInfo(rs.getString(i + 1));
-		return i + 2;
+		entity.setYear(rs.getInt(i + 1));
+		entity.setExtraInfo(rs.getString(i + 2));
+		return i + 3;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected int prepareStatament(PreparedStatement stmt, Source entity, int i) throws SQLException {
 		stmt.setString(i, entity.getTitle());
-		stmt.setString(i + 1, entity.getExtraInfo());
-		return i + 2;
+		stmt.setInt(i + 1, entity.getYear());
+		stmt.setString(i + 2, entity.getExtraInfo());
+		return i + 3;
 	}
 
 	/** {@inheritDoc} */
